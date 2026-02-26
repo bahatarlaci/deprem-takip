@@ -2,6 +2,10 @@
 
 Next.js + TypeScript ile geliştirilmiş, shadcn/ui + Tailwind tabanlı AFAD deprem takip web uygulaması.
 
+## Canlı Demo
+
+- https://depremradar.vercel.app/
+
 ## Özellikler
 
 - AFAD verisi için güvenli proxy: `GET /api/earthquakes`
