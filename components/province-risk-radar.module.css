@@ -1,0 +1,150 @@
+.wrapper {
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--panel-bg);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.kicker {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.header h2 {
+  font-size: 1.03rem;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.badge {
+  border: 1px solid #c0ddff;
+  background: #e9f4ff;
+  color: #17568b;
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.clearButton {
+  border: 1px solid var(--border-color);
+  background: #fff;
+  color: var(--text-color);
+  border-radius: 9px;
+  padding: 7px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.clearButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 12px;
+}
+
+.mapPanel {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 320px;
+  height: 100%;
+  display: flex;
+}
+
+.radarMap {
+  width: 100%;
+  min-height: 320px;
+  height: 100%;
+  flex: 1;
+}
+
+.mapLoading,
+.empty {
+  min-height: 320px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+.tablePanel {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: #fafdff;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tablePanel h3 {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.tableWrap {
+  overflow: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  border-bottom: 1px solid #e4ebf5;
+  padding: 8px 6px;
+  font-size: 0.8rem;
+}
+
+.table tbody tr {
+  cursor: pointer;
+}
+
+.table tbody tr:hover {
+  background: #eef6ff;
+}
+
+.activeRow {
+  background: #e1f0ff;
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 1080px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+}

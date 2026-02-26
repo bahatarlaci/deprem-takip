@@ -8,6 +8,7 @@ Next.js + TypeScript ile geliştirilmiş, AFAD deprem verisini filtreleyip harit
 - Zaman, büyüklük, derinlik, kutusal coğrafi ve yarıçap filtreleri
 - Liste + harita senkron etkileşim
 - Haritada `Cluster` ve `Heatmap` yoğunluk katmanları (aç/kapat)
+- İl bazlı risk radar (harita + en hareketli 10 il tablosu)
 - 60 saniye auto-refresh + manuel yenileme
 - `M >= 4.0` için kritik uyarı bannerı ve opsiyonel ses bildirimi
 - Türkiye saat dilimi (`Europe/Istanbul`) ile zaman gösterimi

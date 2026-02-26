@@ -6,6 +6,7 @@ import { CriticalAlertBanner } from "@/components/critical-alert-banner";
 import { EarthquakeList } from "@/components/earthquake-list";
 import { EarthquakeMap } from "@/components/earthquake-map";
 import { FilterPanel } from "@/components/filter-panel";
+import { ProvinceRiskRadar } from "@/components/province-risk-radar";
 import { SummaryCards } from "@/components/summary-cards";
 import { createDefaultFilters, useEarthquakes } from "@/hooks/use-earthquakes";
 import { EarthquakeFilters } from "@/lib/types";
@@ -47,13 +48,30 @@ export default function HomePage() {
   const [appliedFilters, setAppliedFilters] = useState<EarthquakeFilters>(defaults);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(false);
+  const [activeProvince, setActiveProvince] = useState<string | null>(null);
 
   const { data, meta, isLoading, isRefreshing, error, refresh, clientRadialOverridesBounding } =
     useEarthquakes(appliedFilters);
 
+  const effectiveActiveProvince = useMemo(() => {
+    if (activeProvince && data.some((event) => event.province === activeProvince)) {
+      return activeProvince;
+    }
+
+    return null;
+  }, [activeProvince, data]);
+
+  const displayedEvents = useMemo(() => {
+    if (!effectiveActiveProvince) {
+      return data;
+    }
+
+    return data.filter((event) => event.province === effectiveActiveProvince);
+  }, [data, effectiveActiveProvince]);
+
   const criticalEvent = useMemo(() => {
     return (
-      data
+      displayedEvents
         .filter((event) => event.magnitude >= CRITICAL_THRESHOLD)
         .sort((left, right) => {
           if (right.magnitude !== left.magnitude) {
@@ -63,16 +81,30 @@ export default function HomePage() {
           return Date.parse(right.date) - Date.parse(left.date);
         })[0] ?? null
     );
-  }, [data]);
+  }, [displayedEvents]);
+
+  const summaryMeta = useMemo(() => {
+    if (!meta) {
+      return null;
+    }
+
+    return {
+      ...meta,
+      count: displayedEvents.length,
+    };
+  }, [displayedEvents.length, meta]);
 
   const previousCriticalIdRef = useRef<string | null>(null);
   const effectiveSelectedEventId = useMemo(() => {
-    if (selectedEventId && data.some((event) => event.eventID === selectedEventId)) {
+    if (
+      selectedEventId &&
+      displayedEvents.some((event) => event.eventID === selectedEventId)
+    ) {
       return selectedEventId;
     }
 
-    return data[0]?.eventID ?? null;
-  }, [data, selectedEventId]);
+    return displayedEvents[0]?.eventID ?? null;
+  }, [displayedEvents, selectedEventId]);
 
   useEffect(() => {
     const currentCriticalId = criticalEvent?.eventID ?? null;
@@ -113,7 +145,14 @@ export default function HomePage() {
         </button>
       </header>
 
-      <SummaryCards events={data} meta={meta} isRefreshing={isRefreshing} />
+      <SummaryCards events={displayedEvents} meta={summaryMeta} isRefreshing={isRefreshing} />
+
+      <ProvinceRiskRadar
+        events={data}
+        activeProvince={effectiveActiveProvince}
+        onProvinceSelect={(province) => setActiveProvince(province)}
+        onClear={() => setActiveProvince(null)}
+      />
 
       <CriticalAlertBanner
         criticalEvent={criticalEvent}
@@ -139,12 +178,12 @@ export default function HomePage() {
 
         <section className={styles.content}>
           <EarthquakeMap
-            events={data}
+            events={displayedEvents}
             selectedEventId={effectiveSelectedEventId}
             onSelectEvent={setSelectedEventId}
           />
           <EarthquakeList
-            events={data}
+            events={displayedEvents}
             selectedEventId={effectiveSelectedEventId}
             onSelectEvent={setSelectedEventId}
             isLoading={isLoading}
