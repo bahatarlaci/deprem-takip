@@ -9,6 +9,7 @@ Next.js + TypeScript ile geliştirilmiş, shadcn/ui + Tailwind tabanlı AFAD dep
 - Liste + harita senkron etkileşim
 - Haritada `Cluster` ve `Heatmap` yoğunluk katmanları (aç/kapat)
 - İl bazlı risk radar (harita + en hareketli 10 il tablosu)
+- Web Push alarm kuralı: `M >= X`, il/ilçe ve derinlik filtresine göre anlık bildirim
 - 60 saniye auto-refresh + manuel yenileme
 - `M >= 4.0` için kritik uyarı bannerı ve opsiyonel ses bildirimi
 - Türkiye saat dilimi (`Europe/Istanbul`) ile zaman gösterimi
