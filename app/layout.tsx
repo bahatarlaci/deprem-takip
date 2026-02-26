@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { SiteNav } from "@/components/site-nav";
 import {
@@ -99,6 +100,7 @@ export default function RootLayout({
           <SiteNav />
           {children}
         </div>
+        <SpeedInsights />
       </body>
     </html>
   );
