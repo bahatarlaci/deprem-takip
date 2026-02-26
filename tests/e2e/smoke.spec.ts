@@ -40,9 +40,9 @@ test("dashboard açılır ve filtre değişimi isteğe yansır", async ({ page }
     });
   });
 
-  await page.goto("/");
+  await page.goto("/depremler");
 
-  await expect(page.getByRole("heading", { name: "Deprem Takip Paneli" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Filtreli Deprem Listesi" })).toBeVisible();
   await expect(page.getByTestId("event-row-701434")).toBeVisible();
 
   await page.getByLabel("Min Büyüklük").fill("4");

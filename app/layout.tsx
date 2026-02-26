@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 
+import { SiteNav } from "@/components/site-nav";
+
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -29,7 +31,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr">
-      <body className={`${spaceGrotesk.variable} ${ibmPlexMono.variable}`}>{children}</body>
+      <body className={`${spaceGrotesk.variable} ${ibmPlexMono.variable}`}>
+        <div className="mx-auto flex min-h-screen w-full max-w-[1380px] flex-col gap-4 pb-6">
+          <SiteNav />
+          {children}
+        </div>
+      </body>
     </html>
   );
 }

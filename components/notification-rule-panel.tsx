@@ -7,9 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { NotificationRule } from "@/lib/notifications";
-
-export type NotificationPermissionState = NotificationPermission | "unsupported";
+import { NotificationPermissionState, NotificationRule } from "@/lib/notifications";
 
 interface NotificationRulePanelProps {
   rule: NotificationRule;

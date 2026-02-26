@@ -5,6 +5,7 @@ Next.js + TypeScript ile geliştirilmiş, shadcn/ui + Tailwind tabanlı AFAD dep
 ## Özellikler
 
 - AFAD verisi için güvenli proxy: `GET /api/earthquakes`
+- Çok sayfalı sade arayüz: `Dashboard`, `Depremler`, `Harita`, `Risk`, `Bildirimler`
 - Zaman, büyüklük, derinlik, kutusal coğrafi ve yarıçap filtreleri
 - Liste + harita senkron etkileşim
 - Haritada `Cluster` ve `Heatmap` yoğunluk katmanları (aç/kapat)
@@ -22,6 +23,14 @@ npm run dev
 ```
 
 Uygulama: [http://localhost:3000](http://localhost:3000)
+
+## Sayfalar
+
+- `/` - Dashboard özeti, kritik uyarı, risk radar, canlı liste
+- `/depremler` - filtre paneli + detaylı deprem listesi
+- `/harita` - canlı harita (cluster/heatmap) + senkron liste
+- `/risk` - il bazlı risk yoğunluğu ve il filtresi
+- `/bildirimler` - web push alarm kuralları ve bildirim yönetimi
 
 ## Testler
 

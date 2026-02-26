@@ -4,6 +4,8 @@ export const NOTIFICATION_RULE_STORAGE_KEY = "deprem_notification_rule_v1";
 export const NOTIFIED_EVENT_IDS_STORAGE_KEY = "deprem_notified_event_ids_v1";
 const NOTIFIED_EVENT_IDS_LIMIT = 400;
 
+export type NotificationPermissionState = NotificationPermission | "unsupported";
+
 export interface NotificationRule {
   enabled: boolean;
   minMagnitude: number;

@@ -31,12 +31,13 @@ function updateField(
 
 interface FieldProps {
   label: string;
+  className?: string;
   children: React.ReactNode;
 }
 
-function Field({ label, children }: FieldProps) {
+function Field({ label, className, children }: FieldProps) {
   return (
-    <label className="block space-y-2">
+    <label className={cn("block space-y-2", className)}>
       <span className="text-xs font-medium text-muted-foreground">{label}</span>
       {children}
     </label>
@@ -83,7 +84,7 @@ export function FilterPanel({
       </CardHeader>
       <CardContent className="space-y-5 pt-0">
         <form id="filter-form" className="space-y-5" onSubmit={handleSubmit}>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="space-y-3">
             <Field label="Event ID">
               <Input
                 type="text"
@@ -93,6 +94,7 @@ export function FilterPanel({
                 placeholder="Örn: 701434"
               />
             </Field>
+
             <Field label="Başlangıç">
               <Input
                 type="datetime-local"
@@ -102,6 +104,7 @@ export function FilterPanel({
                 required
               />
             </Field>
+
             <Field label="Bitiş">
               <Input
                 type="datetime-local"
@@ -111,27 +114,30 @@ export function FilterPanel({
                 required
               />
             </Field>
-            <Field label="Limit">
-              <Input
-                type="number"
-                name="limit"
-                min={1}
-                max={10000}
-                value={filters.limit}
-                onChange={(event) => onFiltersChange(updateField(filters, event))}
-              />
-            </Field>
-            <Field label="Sıralama">
-              <select
-                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                name="orderby"
-                value={filters.orderby}
-                onChange={(event) => onFiltersChange(updateField(filters, event))}
-              >
-                <option value="timedesc">Yeni {">"} Eski</option>
-                <option value="timeasc">Eski {">"} Yeni</option>
-              </select>
-            </Field>
+
+            <div className="grid gap-3 md:grid-cols-2">
+              <Field label="Limit">
+                <Input
+                  type="number"
+                  name="limit"
+                  min={1}
+                  max={10000}
+                  value={filters.limit}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+              <Field label="Sıralama">
+                <select
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  name="orderby"
+                  value={filters.orderby}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                >
+                  <option value="timedesc">Yeni {">"} Eski</option>
+                  <option value="timeasc">Eski {">"} Yeni</option>
+                </select>
+              </Field>
+            </div>
           </div>
 
           <div className="space-y-3">
