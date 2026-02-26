@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AFAD Deprem Takip
 
-## Getting Started
+Next.js + TypeScript ile geliştirilmiş, AFAD deprem verisini filtreleyip harita ve listede gösteren web uygulaması.
 
-First, run the development server:
+## Özellikler
+
+- AFAD verisi için güvenli proxy: `GET /api/earthquakes`
+- Zaman, büyüklük, derinlik, kutusal coğrafi ve yarıçap filtreleri
+- Liste + harita senkron etkileşim
+- Haritada `Cluster` ve `Heatmap` yoğunluk katmanları (aç/kapat)
+- 60 saniye auto-refresh + manuel yenileme
+- `M >= 4.0` için kritik uyarı bannerı ve opsiyonel ses bildirimi
+- Türkiye saat dilimi (`Europe/Istanbul`) ile zaman gösterimi
+
+## Kurulum
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Uygulama: [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Testler
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run test
+npm run test:e2e
+```
 
-## Learn More
+## API
 
-To learn more about Next.js, take a look at the following resources:
+### `GET /api/earthquakes`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Desteklenen query parametreleri:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `start` (zorunlu, ISO datetime)
+- `end` (zorunlu, ISO datetime)
+- `limit`
+- `orderby` (`timedesc` | `timeasc`)
+- `eventid`
+- `minmag`, `maxmag`
+- `mindepth`, `maxdepth`
+- `minlat`, `maxlat`, `minlon`, `maxlon`
+- `lat`, `lon`, `minrad`, `maxrad`
 
-## Deploy on Vercel
+Not: `lat/lon/maxrad` ile yarıçap filtresi aktifse kutusal alanlar (`minlat...`) otomatik olarak yok sayılır.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+```
+
+Ardından proje doğrudan Vercel'e deploy edilebilir.

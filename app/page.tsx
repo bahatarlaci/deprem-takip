@@ -1,65 +1,155 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import { CriticalAlertBanner } from "@/components/critical-alert-banner";
+import { EarthquakeList } from "@/components/earthquake-list";
+import { EarthquakeMap } from "@/components/earthquake-map";
+import { FilterPanel } from "@/components/filter-panel";
+import { SummaryCards } from "@/components/summary-cards";
+import { createDefaultFilters, useEarthquakes } from "@/hooks/use-earthquakes";
+import { EarthquakeFilters } from "@/lib/types";
+
 import styles from "./page.module.css";
 
-export default function Home() {
+const CRITICAL_THRESHOLD = 4.0;
+
+function playAlertTone(): void {
+  const AudioContextConstructor =
+    window.AudioContext ||
+    (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  if (!AudioContextConstructor) {
+    return;
+  }
+  const audioContext = new AudioContextConstructor();
+
+  const oscillator = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
+
+  oscillator.type = "triangle";
+  oscillator.frequency.value = 880;
+  gainNode.gain.value = 0.02;
+
+  oscillator.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+
+  oscillator.start();
+  oscillator.stop(audioContext.currentTime + 0.25);
+
+  setTimeout(() => {
+    void audioContext.close();
+  }, 500);
+}
+
+export default function HomePage() {
+  const defaults = useMemo(() => createDefaultFilters(), []);
+  const [filters, setFilters] = useState<EarthquakeFilters>(defaults);
+  const [appliedFilters, setAppliedFilters] = useState<EarthquakeFilters>(defaults);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+
+  const { data, meta, isLoading, isRefreshing, error, refresh, clientRadialOverridesBounding } =
+    useEarthquakes(appliedFilters);
+
+  const criticalEvent = useMemo(() => {
+    return (
+      data
+        .filter((event) => event.magnitude >= CRITICAL_THRESHOLD)
+        .sort((left, right) => {
+          if (right.magnitude !== left.magnitude) {
+            return right.magnitude - left.magnitude;
+          }
+
+          return Date.parse(right.date) - Date.parse(left.date);
+        })[0] ?? null
+    );
+  }, [data]);
+
+  const previousCriticalIdRef = useRef<string | null>(null);
+  const effectiveSelectedEventId = useMemo(() => {
+    if (selectedEventId && data.some((event) => event.eventID === selectedEventId)) {
+      return selectedEventId;
+    }
+
+    return data[0]?.eventID ?? null;
+  }, [data, selectedEventId]);
+
+  useEffect(() => {
+    const currentCriticalId = criticalEvent?.eventID ?? null;
+
+    if (!currentCriticalId) {
+      previousCriticalIdRef.current = null;
+      return;
+    }
+
+    const isNewCritical = previousCriticalIdRef.current !== currentCriticalId;
+    previousCriticalIdRef.current = currentCriticalId;
+
+    if (isNewCritical && soundEnabled) {
+      playAlertTone();
+    }
+  }, [criticalEvent, soundEnabled]);
+
+  const handleApplyFilters = () => {
+    setAppliedFilters(filters);
+  };
+
+  const handleResetFilters = () => {
+    const nextDefaults = createDefaultFilters();
+    setFilters(nextDefaults);
+    setAppliedFilters(nextDefaults);
+  };
+
   return (
     <div className={styles.page}>
+      <header className={styles.header}>
+        <div>
+          <p className={styles.kicker}>AFAD Earthquake API</p>
+          <h1>Deprem Takip Paneli</h1>
+          <p className={styles.subtitle}>Türkiye genelindeki son depremleri filtrele, listede incele ve haritada takip et.</p>
+        </div>
+        <button type="button" className={styles.refreshButton} onClick={() => void refresh()} disabled={isLoading}>
+          Manuel Yenile
+        </button>
+      </header>
+
+      <SummaryCards events={data} meta={meta} isRefreshing={isRefreshing} />
+
+      <CriticalAlertBanner
+        criticalEvent={criticalEvent}
+        threshold={CRITICAL_THRESHOLD}
+        soundEnabled={soundEnabled}
+        onToggleSound={() => setSoundEnabled((previous) => !previous)}
+        onFocusEvent={setSelectedEventId}
+      />
+
+      {error ? <p className={styles.error}>{error}</p> : null}
+
       <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        <aside className={styles.sidebar}>
+          <FilterPanel
+            filters={filters}
+            onFiltersChange={setFilters}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            isLoading={isLoading}
+            radialOverridesBounding={Boolean(meta?.radialOverridesBounding) || clientRadialOverridesBounding}
+          />
+        </aside>
+
+        <section className={styles.content}>
+          <EarthquakeMap
+            events={data}
+            selectedEventId={effectiveSelectedEventId}
+            onSelectEvent={setSelectedEventId}
+          />
+          <EarthquakeList
+            events={data}
+            selectedEventId={effectiveSelectedEventId}
+            onSelectEvent={setSelectedEventId}
+            isLoading={isLoading}
+          />
+        </section>
       </main>
     </div>
   );
