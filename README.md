@@ -28,6 +28,7 @@ Uygulama: [http://localhost:3000](http://localhost:3000)
 
 - `/` - Dashboard özeti, kritik uyarı, risk radar, canlı liste
 - `/depremler` - filtre paneli + detaylı deprem listesi
+- `/depremler/[eventId]` - artçı zinciri, yakın depremler, paylaşılabilir detay ekranı
 - `/harita` - canlı harita (cluster/heatmap) + senkron liste
 - `/risk` - il bazlı risk yoğunluğu ve il filtresi
 - `/bildirimler` - web push alarm kuralları ve bildirim yönetimi

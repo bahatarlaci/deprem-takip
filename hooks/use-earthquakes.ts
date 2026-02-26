@@ -75,8 +75,9 @@ export function buildEarthquakeSearchParams(filters: EarthquakeFilters): {
   searchParams.set("limit", String(parseLimit(filters.limit)));
   searchParams.set("orderby", filters.orderby);
 
-  if (filters.eventid.trim()) {
-    searchParams.set("eventid", filters.eventid.trim());
+  const eventId = (filters.eventid ?? "").trim();
+  if (eventId) {
+    searchParams.set("eventid", eventId);
   }
 
   const numericFields: Array<keyof EarthquakeFilters> = [
@@ -107,7 +108,7 @@ export function buildEarthquakeSearchParams(filters: EarthquakeFilters): {
       continue;
     }
 
-    const value = filters[field].trim();
+    const value = (filters[field] ?? "").trim();
     if (!value) {
       continue;
     }

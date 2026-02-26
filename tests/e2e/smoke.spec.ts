@@ -28,7 +28,7 @@ const mockResponse = {
   },
 };
 
-test("dashboard açılır ve filtre değişimi isteğe yansır", async ({ page }) => {
+test("depremler sayfası açılır, filtre ve detay akışı çalışır", async ({ page }) => {
   const requestedUrls: string[] = [];
 
   await page.route("**/api/earthquakes**", async (route) => {
@@ -49,4 +49,7 @@ test("dashboard açılır ve filtre değişimi isteğe yansır", async ({ page }
   await page.getByRole("button", { name: "Uygula" }).click();
 
   await expect.poll(() => requestedUrls.some((url) => url.includes("minmag=4"))).toBe(true);
+
+  await page.getByRole("link", { name: "Aç" }).first().click();
+  await expect(page.getByRole("heading", { name: "Event ID: 701434" })).toBeVisible();
 });

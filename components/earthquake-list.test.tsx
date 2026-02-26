@@ -42,4 +42,18 @@ describe("EarthquakeList", () => {
 
     expect(onSelectEvent).toHaveBeenCalledWith("100");
   });
+
+  it("detay linki verildiğinde satır içinde gösterir", () => {
+    render(
+      <EarthquakeList
+        events={events}
+        selectedEventId={null}
+        onSelectEvent={vi.fn()}
+        isLoading={false}
+        detailHrefBuilder={(event) => `/depremler/${event.eventID}`}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "Aç" })).toHaveAttribute("href", "/depremler/100");
+  });
 });

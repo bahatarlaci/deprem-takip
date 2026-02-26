@@ -73,6 +73,7 @@ export default function MapPage() {
           selectedEventId={effectiveSelectedEventId}
           onSelectEvent={setSelectedEventId}
           isLoading={isLoading}
+          detailHrefBuilder={(event) => "/depremler/" + event.eventID}
         />
       </section>
     </div>

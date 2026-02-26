@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -19,6 +21,7 @@ interface EarthquakeListProps {
   selectedEventId: string | null;
   onSelectEvent: (eventId: string) => void;
   isLoading: boolean;
+  detailHrefBuilder?: (event: EarthquakeEvent) => string;
 }
 
 export function EarthquakeList({
@@ -26,6 +29,7 @@ export function EarthquakeList({
   selectedEventId,
   onSelectEvent,
   isLoading,
+  detailHrefBuilder,
 }: EarthquakeListProps) {
   const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
 
@@ -57,6 +61,9 @@ export function EarthquakeList({
             <TableHead className="sticky top-0 z-10 bg-slate-50/95">Konum</TableHead>
             <TableHead className="sticky top-0 z-10 bg-slate-50/95">Büyüklük</TableHead>
             <TableHead className="sticky top-0 z-10 bg-slate-50/95">Derinlik</TableHead>
+            {detailHrefBuilder ? (
+              <TableHead className="sticky top-0 z-10 bg-slate-50/95 text-right">Detay</TableHead>
+            ) : null}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -76,6 +83,20 @@ export function EarthquakeList({
                 <TableCell>{event.location}</TableCell>
                 <TableCell>M {event.magnitude.toFixed(1)}</TableCell>
                 <TableCell>{event.depth.toFixed(1)} km</TableCell>
+                {detailHrefBuilder ? (
+                  <TableCell className="text-right">
+                    <Button asChild type="button" variant="ghost" size="sm">
+                      <Link
+                        href={detailHrefBuilder(event)}
+                        onClick={(eventTarget) => {
+                          eventTarget.stopPropagation();
+                        }}
+                      >
+                        Aç
+                      </Link>
+                    </Button>
+                  </TableCell>
+                ) : null}
               </TableRow>
             );
           })}

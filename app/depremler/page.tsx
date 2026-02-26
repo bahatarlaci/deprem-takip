@@ -144,6 +144,7 @@ export default function EarthquakesPage() {
             selectedEventId={effectiveSelectedEventId}
             onSelectEvent={setSelectedEventId}
             isLoading={isLoading}
+            detailHrefBuilder={(event) => "/depremler/" + event.eventID}
           />
         </section>
       </main>

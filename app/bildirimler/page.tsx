@@ -138,6 +138,7 @@ export default function NotificationsPage() {
           selectedEventId={effectiveSelectedEventId}
           onSelectEvent={setSelectedEventId}
           isLoading={isLoading}
+          detailHrefBuilder={(event) => "/depremler/" + event.eventID}
         />
       </section>
     </div>
