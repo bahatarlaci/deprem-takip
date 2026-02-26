@@ -11,6 +11,9 @@ Next.js + TypeScript ile geliştirilmiş, shadcn/ui + Tailwind tabanlı AFAD dep
 - Haritada `Cluster` ve `Heatmap` yoğunluk katmanları (aç/kapat)
 - İl bazlı risk radar (harita + en hareketli 10 il tablosu)
 - Web Push alarm kuralı: `M >= X`, il/ilçe ve derinlik filtresine göre anlık bildirim
+- Teknik SEO altyapısı: route bazlı metadata, canonical URL, Open Graph/Twitter kartları
+- Arama motoru keşfi: `sitemap.xml` ve `robots.txt` üretimi
+- Yapılandırılmış veri (JSON-LD): `WebSite`, `WebPage`, `BreadcrumbList`
 - 60 saniye auto-refresh + manuel yenileme
 - `M >= 4.0` için kritik uyarı bannerı ve opsiyonel ses bildirimi
 - Türkiye saat dilimi (`Europe/Istanbul`) ile zaman gösterimi
@@ -26,7 +29,7 @@ Uygulama: [http://localhost:3000](http://localhost:3000)
 
 ## Sayfalar
 
-- `/` - Dashboard özeti, kritik uyarı, risk radar, canlı liste
+- `/` - Dashboard özeti, kritik uyarı, operasyon metrikleri, son 10 kayıt
 - `/depremler` - filtre paneli + detaylı deprem listesi
 - `/depremler/[eventId]` - artçı zinciri, yakın depremler, paylaşılabilir detay ekranı
 - `/harita` - canlı harita (cluster/heatmap) + senkron liste
@@ -65,3 +68,11 @@ npm run build
 ```
 
 Ardından proje doğrudan Vercel'e deploy edilebilir.
+
+## SEO Konfigürasyonu
+
+- Site URL’i production’da doğru canonical üretimi için `NEXT_PUBLIC_SITE_URL` ile tanımlayın.
+- Dinamik route dahil tüm temel sayfalarda metadata `app/*/page.tsx` dosyalarında yönetilir.
+- Arama motoru çıktıları:
+  - `/sitemap.xml`
+  - `/robots.txt`
