@@ -2,9 +2,11 @@
 
 import { ChangeEvent, FormEvent } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { EarthquakeFilters } from "@/lib/types";
-
-import styles from "./filter-panel.module.css";
 
 interface FilterPanelProps {
   filters: EarthquakeFilters;
@@ -25,6 +27,20 @@ function updateField(
     ...filters,
     [name]: value,
   };
+}
+
+interface FieldProps {
+  label: string;
+  children: React.ReactNode;
+}
+
+function Field({ label, children }: FieldProps) {
+  return (
+    <label className="block space-y-2">
+      <span className="text-xs font-medium text-muted-foreground">{label}</span>
+      {children}
+    </label>
+  );
 }
 
 export function FilterPanel({
@@ -51,217 +67,210 @@ export function FilterPanel({
   const showOverrideNotice = radialOverridesBounding || (radialFieldsComplete && anyBoundingFilled);
 
   return (
-    <form className={styles.panel} onSubmit={handleSubmit}>
-      <div className={styles.header}>
-        <h2>Filtreler</h2>
-        <div className={styles.headerActions}>
-          <button type="button" onClick={onReset} className={styles.ghostButton}>
-            Varsayılana Dön
-          </button>
-          <button type="submit" disabled={isLoading} className={styles.primaryButton}>
-            Uygula
-          </button>
+    <Card className="border-border/80 bg-white/85 shadow-sm backdrop-blur-sm">
+      <CardHeader className="pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <CardTitle className="text-base">Filtreler</CardTitle>
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={onReset}>
+              Varsayılana Dön
+            </Button>
+            <Button type="submit" size="sm" form="filter-form" disabled={isLoading}>
+              Uygula
+            </Button>
+          </div>
         </div>
-      </div>
+      </CardHeader>
+      <CardContent className="space-y-5 pt-0">
+        <form id="filter-form" className="space-y-5" onSubmit={handleSubmit}>
+          <div className="grid gap-3 md:grid-cols-2">
+            <Field label="Event ID">
+              <Input
+                type="text"
+                name="eventid"
+                value={filters.eventid}
+                onChange={(event) => onFiltersChange(updateField(filters, event))}
+                placeholder="Örn: 701434"
+              />
+            </Field>
+            <Field label="Başlangıç">
+              <Input
+                type="datetime-local"
+                name="start"
+                value={filters.start}
+                onChange={(event) => onFiltersChange(updateField(filters, event))}
+                required
+              />
+            </Field>
+            <Field label="Bitiş">
+              <Input
+                type="datetime-local"
+                name="end"
+                value={filters.end}
+                onChange={(event) => onFiltersChange(updateField(filters, event))}
+                required
+              />
+            </Field>
+            <Field label="Limit">
+              <Input
+                type="number"
+                name="limit"
+                min={1}
+                max={10000}
+                value={filters.limit}
+                onChange={(event) => onFiltersChange(updateField(filters, event))}
+              />
+            </Field>
+            <Field label="Sıralama">
+              <select
+                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                name="orderby"
+                value={filters.orderby}
+                onChange={(event) => onFiltersChange(updateField(filters, event))}
+              >
+                <option value="timedesc">Yeni {">"} Eski</option>
+                <option value="timeasc">Eski {">"} Yeni</option>
+              </select>
+            </Field>
+          </div>
 
-      <div className={styles.grid}>
-        <label>
-          Event ID
-          <input
-            type="text"
-            name="eventid"
-            value={filters.eventid}
-            onChange={(event) => onFiltersChange(updateField(filters, event))}
-            placeholder="Örn: 701434"
-          />
-        </label>
-        <label>
-          Başlangıç
-          <input
-            type="datetime-local"
-            name="start"
-            value={filters.start}
-            onChange={(event) => onFiltersChange(updateField(filters, event))}
-            required
-          />
-        </label>
-        <label>
-          Bitiş
-          <input
-            type="datetime-local"
-            name="end"
-            value={filters.end}
-            onChange={(event) => onFiltersChange(updateField(filters, event))}
-            required
-          />
-        </label>
-        <label>
-          Limit
-          <input
-            type="number"
-            name="limit"
-            min={1}
-            max={10000}
-            value={filters.limit}
-            onChange={(event) => onFiltersChange(updateField(filters, event))}
-          />
-        </label>
-        <label>
-          Sıralama
-          <select
-            name="orderby"
-            value={filters.orderby}
-            onChange={(event) => onFiltersChange(updateField(filters, event))}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-muted-foreground">Büyüklük ve Derinlik</h3>
+            <div className="grid gap-3 md:grid-cols-2">
+              <Field label="Min Büyüklük">
+                <Input
+                  type="number"
+                  step="0.1"
+                  name="minmag"
+                  value={filters.minmag}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+              <Field label="Max Büyüklük">
+                <Input
+                  type="number"
+                  step="0.1"
+                  name="maxmag"
+                  value={filters.maxmag}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+              <Field label="Min Derinlik (km)">
+                <Input
+                  type="number"
+                  step="0.1"
+                  name="mindepth"
+                  value={filters.mindepth}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+              <Field label="Max Derinlik (km)">
+                <Input
+                  type="number"
+                  step="0.1"
+                  name="maxdepth"
+                  value={filters.maxdepth}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-muted-foreground">Kutusal Coğrafi Filtre</h3>
+            <div className="grid gap-3 md:grid-cols-2">
+              <Field label="Min Enlem">
+                <Input
+                  type="number"
+                  step="0.0001"
+                  name="minlat"
+                  value={filters.minlat}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+              <Field label="Max Enlem">
+                <Input
+                  type="number"
+                  step="0.0001"
+                  name="maxlat"
+                  value={filters.maxlat}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+              <Field label="Min Boylam">
+                <Input
+                  type="number"
+                  step="0.0001"
+                  name="minlon"
+                  value={filters.minlon}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+              <Field label="Max Boylam">
+                <Input
+                  type="number"
+                  step="0.0001"
+                  name="maxlon"
+                  value={filters.maxlon}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-muted-foreground">Yarıçap Coğrafi Filtre</h3>
+            <div className="grid gap-3 md:grid-cols-2">
+              <Field label="Merkez Enlem">
+                <Input
+                  type="number"
+                  step="0.0001"
+                  name="lat"
+                  value={filters.lat}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+              <Field label="Merkez Boylam">
+                <Input
+                  type="number"
+                  step="0.0001"
+                  name="lon"
+                  value={filters.lon}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+              <Field label="Min Yarıçap (m)">
+                <Input
+                  type="number"
+                  step="1"
+                  name="minrad"
+                  value={filters.minrad}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+              <Field label="Max Yarıçap (m)">
+                <Input
+                  type="number"
+                  step="1"
+                  name="maxrad"
+                  value={filters.maxrad}
+                  onChange={(event) => onFiltersChange(updateField(filters, event))}
+                />
+              </Field>
+            </div>
+          </div>
+        </form>
+
+        {showOverrideNotice ? (
+          <p
+            className={cn(
+              "rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-xs text-emerald-700",
+            )}
           >
-            <option value="timedesc">Yeni {">"} Eski</option>
-            <option value="timeasc">Eski {">"} Yeni</option>
-          </select>
-        </label>
-      </div>
-
-      <div className={styles.group}>
-        <h3>Büyüklük ve Derinlik</h3>
-        <div className={styles.grid}>
-          <label>
-            Min Büyüklük
-            <input
-              type="number"
-              step="0.1"
-              name="minmag"
-              value={filters.minmag}
-              onChange={(event) => onFiltersChange(updateField(filters, event))}
-            />
-          </label>
-          <label>
-            Max Büyüklük
-            <input
-              type="number"
-              step="0.1"
-              name="maxmag"
-              value={filters.maxmag}
-              onChange={(event) => onFiltersChange(updateField(filters, event))}
-            />
-          </label>
-          <label>
-            Min Derinlik (km)
-            <input
-              type="number"
-              step="0.1"
-              name="mindepth"
-              value={filters.mindepth}
-              onChange={(event) => onFiltersChange(updateField(filters, event))}
-            />
-          </label>
-          <label>
-            Max Derinlik (km)
-            <input
-              type="number"
-              step="0.1"
-              name="maxdepth"
-              value={filters.maxdepth}
-              onChange={(event) => onFiltersChange(updateField(filters, event))}
-            />
-          </label>
-        </div>
-      </div>
-
-      <div className={styles.group}>
-        <h3>Kutusal Coğrafi Filtre</h3>
-        <div className={styles.grid}>
-          <label>
-            Min Enlem
-            <input
-              type="number"
-              step="0.0001"
-              name="minlat"
-              value={filters.minlat}
-              onChange={(event) => onFiltersChange(updateField(filters, event))}
-            />
-          </label>
-          <label>
-            Max Enlem
-            <input
-              type="number"
-              step="0.0001"
-              name="maxlat"
-              value={filters.maxlat}
-              onChange={(event) => onFiltersChange(updateField(filters, event))}
-            />
-          </label>
-          <label>
-            Min Boylam
-            <input
-              type="number"
-              step="0.0001"
-              name="minlon"
-              value={filters.minlon}
-              onChange={(event) => onFiltersChange(updateField(filters, event))}
-            />
-          </label>
-          <label>
-            Max Boylam
-            <input
-              type="number"
-              step="0.0001"
-              name="maxlon"
-              value={filters.maxlon}
-              onChange={(event) => onFiltersChange(updateField(filters, event))}
-            />
-          </label>
-        </div>
-      </div>
-
-      <div className={styles.group}>
-        <h3>Yarıçap Coğrafi Filtre</h3>
-        <div className={styles.grid}>
-          <label>
-            Merkez Enlem
-            <input
-              type="number"
-              step="0.0001"
-              name="lat"
-              value={filters.lat}
-              onChange={(event) => onFiltersChange(updateField(filters, event))}
-            />
-          </label>
-          <label>
-            Merkez Boylam
-            <input
-              type="number"
-              step="0.0001"
-              name="lon"
-              value={filters.lon}
-              onChange={(event) => onFiltersChange(updateField(filters, event))}
-            />
-          </label>
-          <label>
-            Min Yarıçap (m)
-            <input
-              type="number"
-              step="1"
-              name="minrad"
-              value={filters.minrad}
-              onChange={(event) => onFiltersChange(updateField(filters, event))}
-            />
-          </label>
-          <label>
-            Max Yarıçap (m)
-            <input
-              type="number"
-              step="1"
-              name="maxrad"
-              value={filters.maxrad}
-              onChange={(event) => onFiltersChange(updateField(filters, event))}
-            />
-          </label>
-        </div>
-      </div>
-
-      {showOverrideNotice ? (
-        <p className={styles.notice}>
-          Yarıçap filtresi aktif. Kutusal filtre değerleri bu istekte otomatik olarak yok sayılacaktır.
-        </p>
-      ) : null}
-    </form>
+            Yarıçap filtresi aktif. Kutusal filtre değerleri bu istekte otomatik olarak yok sayılacaktır.
+          </p>
+        ) : null}
+      </CardContent>
+    </Card>
   );
 }

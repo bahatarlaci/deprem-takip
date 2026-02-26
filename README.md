@@ -1,6 +1,6 @@
 # AFAD Deprem Takip
 
-Next.js + TypeScript ile geliştirilmiş, AFAD deprem verisini filtreleyip harita ve listede gösteren web uygulaması.
+Next.js + TypeScript ile geliştirilmiş, shadcn/ui + Tailwind tabanlı AFAD deprem takip web uygulaması.
 
 ## Özellikler
 

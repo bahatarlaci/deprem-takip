@@ -2,10 +2,17 @@
 
 import { useEffect, useRef } from "react";
 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { formatIstanbulDateTime } from "@/lib/time";
+import { cn } from "@/lib/utils";
 import { EarthquakeEvent } from "@/lib/types";
-
-import styles from "./earthquake-list.module.css";
 
 interface EarthquakeListProps {
   events: EarthquakeEvent[];
@@ -34,42 +41,46 @@ export function EarthquakeList({
   }, [selectedEventId]);
 
   if (events.length === 0 && !isLoading) {
-    return <p className={styles.empty}>Seçilen filtre için deprem kaydı bulunamadı.</p>;
+    return (
+      <p className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
+        Seçilen filtre için deprem kaydı bulunamadı.
+      </p>
+    );
   }
 
   return (
-    <div className={styles.wrapper}>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Tarih</th>
-            <th>Konum</th>
-            <th>Büyüklük</th>
-            <th>Derinlik</th>
-          </tr>
-        </thead>
-        <tbody>
+    <div className="max-h-[460px] overflow-auto rounded-xl border border-border/80 bg-white/85 shadow-sm backdrop-blur-sm">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="sticky top-0 z-10 bg-slate-50/95">Tarih</TableHead>
+            <TableHead className="sticky top-0 z-10 bg-slate-50/95">Konum</TableHead>
+            <TableHead className="sticky top-0 z-10 bg-slate-50/95">Büyüklük</TableHead>
+            <TableHead className="sticky top-0 z-10 bg-slate-50/95">Derinlik</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {events.map((event) => {
             const selected = event.eventID === selectedEventId;
             return (
-              <tr
+              <TableRow
                 key={event.eventID}
                 ref={(node) => {
                   rowRefs.current[event.eventID] = node;
                 }}
                 onClick={() => onSelectEvent(event.eventID)}
-                className={selected ? styles.selectedRow : undefined}
+                className={cn("cursor-pointer", selected ? "bg-sky-100/70 hover:bg-sky-100" : undefined)}
                 data-testid={`event-row-${event.eventID}`}
               >
-                <td>{formatIstanbulDateTime(event.date)}</td>
-                <td>{event.location}</td>
-                <td>M {event.magnitude.toFixed(1)}</td>
-                <td>{event.depth.toFixed(1)} km</td>
-              </tr>
+                <TableCell>{formatIstanbulDateTime(event.date)}</TableCell>
+                <TableCell>{event.location}</TableCell>
+                <TableCell>M {event.magnitude.toFixed(1)}</TableCell>
+                <TableCell>{event.depth.toFixed(1)} km</TableCell>
+              </TableRow>
             );
           })}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { EarthquakeMap } from "@/components/earthquake-map";
 import { FilterPanel } from "@/components/filter-panel";
 import { ProvinceRiskRadar } from "@/components/province-risk-radar";
 import { SummaryCards } from "@/components/summary-cards";
+import { Button } from "@/components/ui/button";
 import { createDefaultFilters, useEarthquakes } from "@/hooks/use-earthquakes";
 import { EarthquakeFilters } from "@/lib/types";
 
@@ -140,9 +141,9 @@ export default function HomePage() {
           <h1>Deprem Takip Paneli</h1>
           <p className={styles.subtitle}>Türkiye genelindeki son depremleri filtrele, listede incele ve haritada takip et.</p>
         </div>
-        <button type="button" className={styles.refreshButton} onClick={() => void refresh()} disabled={isLoading}>
+        <Button type="button" variant="outline" onClick={() => void refresh()} disabled={isLoading}>
           Manuel Yenile
-        </button>
+        </Button>
       </header>
 
       <SummaryCards events={displayedEvents} meta={summaryMeta} isRefreshing={isRefreshing} />

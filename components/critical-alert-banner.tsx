@@ -1,8 +1,8 @@
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { EarthquakeEvent } from "@/lib/types";
-
-import styles from "./critical-alert-banner.module.css";
 
 interface CriticalAlertBannerProps {
   criticalEvent: EarthquakeEvent | null;
@@ -24,22 +24,38 @@ export function CriticalAlertBanner({
   }
 
   return (
-    <section className={styles.banner} data-testid="critical-banner">
+    <Alert
+      data-testid="critical-banner"
+      className="flex flex-col gap-3 border-amber-300 bg-gradient-to-r from-amber-100/85 to-orange-100/90 text-amber-950 md:flex-row md:items-center md:justify-between"
+    >
       <div>
-        <strong>Kritik Deprem Uyarısı</strong>
-        <p>
+        <AlertTitle className="mb-2 font-semibold">Kritik Deprem Uyarısı</AlertTitle>
+        <AlertDescription>
           {threshold.toFixed(1)}+ eşik aşıldı: <b>{criticalEvent.location}</b> - M
           {criticalEvent.magnitude.toFixed(1)}
-        </p>
+        </AlertDescription>
       </div>
-      <div className={styles.actions}>
-        <button type="button" className={styles.actionButton} onClick={() => onFocusEvent(criticalEvent.eventID)}>
+
+      <div className="flex flex-wrap gap-2">
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="border-amber-500 bg-white/70 text-amber-950 hover:bg-amber-100"
+          onClick={() => onFocusEvent(criticalEvent.eventID)}
+        >
           Haritada Göster
-        </button>
-        <button type="button" className={styles.actionButton} onClick={onToggleSound}>
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="border-amber-500 bg-white/70 text-amber-950 hover:bg-amber-100"
+          onClick={onToggleSound}
+        >
           Ses: {soundEnabled ? "Açık" : "Kapalı"}
-        </button>
+        </Button>
       </div>
-    </section>
+    </Alert>
   );
 }
